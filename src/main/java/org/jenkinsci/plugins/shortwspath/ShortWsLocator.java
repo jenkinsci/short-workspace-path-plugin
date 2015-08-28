@@ -54,7 +54,7 @@ public class ShortWsLocator extends WorkspaceLocator {
      *
      * The number is not supposed to include the path to the workspace itself.
      */
-    private static int BUILD_PATH_LENGTH = 512; // ought to be enough for anybody.
+    private static int BUILD_PATH_LENGTH = Integer.getInteger("org.jenkinsci.plugins.shortwspath.BUILD_PATH_LENGTH", 512);
 
     // To be invalidated when slave is reconnected
     private final Map<Node, Integer> cachedMaxLengths = new WeakHashMap<Node, Integer>();
@@ -127,7 +127,7 @@ public class ShortWsLocator extends WorkspaceLocator {
 
         @Override
         public String toString() {
-            return "discover max FS path on node";
+            return "discover max FS path length on node";
         }
     }
 }
