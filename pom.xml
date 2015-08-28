@@ -3,12 +3,11 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-<!--    <version>1.509</version>-->
     <version>1.554.1</version> <!-- folders plugin -->
   </parent>
 
   <artifactId>short-workspace-path</artifactId>
-  <version>0.6-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Short Workspace Path Plugin</name>
   <description>Use shallow directory hierarchy for build workspaces to avoid failures on filesystems with constrained path length</description>
