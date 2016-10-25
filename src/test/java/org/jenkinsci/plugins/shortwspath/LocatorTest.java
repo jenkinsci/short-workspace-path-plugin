@@ -41,11 +41,20 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockFolder;
+import hudson.Functions;
 
 public class LocatorTest {
 
     @Rule public JenkinsRule j = new JenkinsRule();
-
+    String formatPath(String inputPath) {
+    	if(Functions.isWindows()) {
+    		return inputPath.replace("/", "\\");
+    	}
+    	else {
+    		return inputPath.replace("\\", "/");
+    	}
+    }
+    
     @Test
     public void doNothingIfThereIsEnoughRoom() throws Exception {
         DumbSlave s = j.createOnlineSlave();
@@ -53,9 +62,12 @@ public class LocatorTest {
         MockFolder f = j.createFolder("this_is_my_folder_alright");
         FreeStyleProject p = f.createProject(FreeStyleProject.class, "and_a_project_in_it");
         p.setAssignedNode(s);
+        
+        // Not enough for anything.
+        setMaxPathLength(s, 4096);       
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
-        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + "/workspace/" + p.getFullName()));
+        assertThat(b.getWorkspace().getRemote(), equalTo(formatPath(s.getRootPath() + "/workspace/" + p.getFullName())));
     }
 
     @Test
@@ -70,7 +82,7 @@ public class LocatorTest {
         setMaxPathLength(s, 1);
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
-        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + "/workspace/" + p.getFullName()));
+        assertThat(b.getWorkspace().getRemote(), equalTo(formatPath(s.getRootPath() + "/workspace/" + p.getFullName())));
     }
 
     @Test
@@ -86,7 +98,7 @@ public class LocatorTest {
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
         String buildWs = b.getWorkspace().getRemote();
-        String wsDir = s.getRootPath() + "/workspace/";
+        String wsDir = formatPath(s.getRootPath() + "/workspace/");
         assertThat(buildWs, startsWith(wsDir + "and_a_pro"));
         assertThat(buildWs, buildWs.length(), equalTo(wsDir.length() + 24));
     }

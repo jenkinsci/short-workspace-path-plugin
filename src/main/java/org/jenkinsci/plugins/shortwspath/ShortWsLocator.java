@@ -55,32 +55,84 @@ public class ShortWsLocator extends WorkspaceLocator {
      * The number is not supposed to include the path to the workspace itself.
      */
     private static int BUILD_PATH_LENGTH = Integer.getInteger("org.jenkinsci.plugins.shortwspath.BUILD_PATH_LENGTH", 512);
+ 
+    /**
+    * Indicate if blanks should be removed from the path
+    */
+    private static boolean REMOVE_BLANKS = Boolean.getBoolean("org.jenkinsci.plugins.shortwspath.REMOVE_BLANKS");
+    
+    /**
+     * Specify string to remove from all pathes
+     */
+    private static String STRIP_DEFAULT_TEXT = System.getProperty("org.jenkinsci.plugins.shortwspath.STRIP_DEFAULT_TEXT");
+    
+    /**
+     * Specify text to replace the ... with 
+     */
+    private static String DEFAULT_TEXT_REPLACE = System.getProperty("org.jenkinsci.plugins.shortwspath.DEFAULT_TEXT_REPLACE"); 
+    
+    /**
+     * prefix the build with text to mark build so that it's easy to detect that it was changed   
+     */
+    private static String INITIAL_PREFIX = System.getProperty("org.jenkinsci.plugins.shortwspath.INITIAL_PREFIX");
+
 
     // To be invalidated when slave is reconnected
     private final Map<Node, Integer> cachedMaxLengths = new WeakHashMap<Node, Integer>();
 
     @Override
     public FilePath locate(TopLevelItem item, Node node) {
-        if (!(node instanceof Slave)) {
-            // noop on master. The path is configurable and rather tricky to replace safely
-            return null;
-        }
-        Slave slave = (Slave) node;
+    	if (!(node instanceof Slave)) {
+    		// noop on master. The path is configurable and rather tricky to replace safely
+    		return null;
+    	}
+    	Slave slave = (Slave) node;
 
-        FilePath def = getDefaultPath(item, slave);
-        if (def == null) return null; // No idea what the path is going to look like - do not touch
+    	FilePath def = getDefaultPath(item, slave);
+    	if (def == null) return null; // No idea what the path is going to look like - do not touch
 
-        int usabeSpace = getUsableSpace(def, node);
-        if (usabeSpace > BUILD_PATH_LENGTH) return null; // There is plenty of room
+    	int usabeSpace = getUsableSpace(def, node);
+    	if (usabeSpace > BUILD_PATH_LENGTH) return null; // There is plenty of room
 
-        String itemName = StringUtils.abbreviate(item.getName(), 0, 16);
-        final String digest = Util.getDigestOf(item.getFullName()).substring(0, 8);
-        FilePath newPath = slave.getWorkspaceRoot().child(itemName + digest);
+    	String iName = item.getName();
+    	
+    	LOGGER.info("Strip default.texts : "+STRIP_DEFAULT_TEXT);
+    	// Replace common text from build ,good to have when naming schema on jenkins dictates that jobs should be named in a certain way
+    	if (STRIP_DEFAULT_TEXT!= null && !STRIP_DEFAULT_TEXT.equals("")) {
+    		if (iName.contains(STRIP_DEFAULT_TEXT)){
+    			iName = iName.replace(STRIP_DEFAULT_TEXT, "");
+    		} 
+    	}
+    	LOGGER.info("Remove Blanks : "+REMOVE_BLANKS);
+    	if (REMOVE_BLANKS) {
+    		//Replace any spaces in path to make resulting path more descriptive
+    		iName= iName.replace(" ","");
+    		
+    	}
+    	
+    	String itemName = StringUtils.abbreviate(iName, 0, 16);
 
-        return newPath.getRemote().length() < def.getRemote().length()
-                ? newPath
-                : null // Do nothing if it will not improve the situation
-        ;
+    	// Replace the ellipsis to avoid problems with certain build systems
+    	LOGGER.info("Initial prefix to add : "+INITIAL_PREFIX);
+    	// adding prefix in the beginning of the build job name to indicate that the item was changed
+    	if (INITIAL_PREFIX!= null) {
+    		itemName = INITIAL_PREFIX + itemName;
+    	}
+    	LOGGER.info("Default text to replace : "+DEFAULT_TEXT_REPLACE);
+    	if (DEFAULT_TEXT_REPLACE != null) {
+    		LOGGER.info("Default text to replace : "+itemName+" -> "+itemName.replace("...", DEFAULT_TEXT_REPLACE));
+    		itemName = itemName.replace("...", DEFAULT_TEXT_REPLACE);
+    	} else {
+    		LOGGER.info("Default text to replace (NOTUSED): "+DEFAULT_TEXT_REPLACE);
+    	}
+
+    	final String digest = Util.getDigestOf(item.getFullName()).substring(0, 8);
+    	FilePath newPath = slave.getWorkspaceRoot().child(itemName + digest);
+
+    	return newPath.getRemote().length() < def.getRemote().length()
+    			? newPath
+    					: null // Do nothing if it will not improve the situation
+    					;
     }
 
     /**
