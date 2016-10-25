@@ -103,7 +103,8 @@ public class LocatorTest {
         assertThat(buildWs, buildWs.length(), equalTo(wsDir.length() + 24));
     }
 
-    private void setMaxPathLength(Slave s, int length) {
+    @SuppressWarnings("unchecked")
+	private void setMaxPathLength(Slave s, int length) {
         ShortWsLocator locator = Jenkins.getInstance().getExtensionList(ShortWsLocator.class).get(0);
         try {
             Field f = ShortWsLocator.class.getDeclaredField("cachedMaxLengths");

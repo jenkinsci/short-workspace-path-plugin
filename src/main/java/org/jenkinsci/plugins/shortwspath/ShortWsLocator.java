@@ -169,7 +169,12 @@ public class ShortWsLocator extends WorkspaceLocator {
 
     private static final class Sniffer implements FilePath.FileCallable<Integer> {
 
-        public Integer invoke(File ws, VirtualChannel channel) throws IOException, InterruptedException {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 3089612877373691969L;
+
+		public Integer invoke(File ws, VirtualChannel channel) throws IOException, InterruptedException {
             // Good enough for now
             return Functions.isWindows()
                     ? 260 // Windows
