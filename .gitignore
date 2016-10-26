@@ -1,5 +1,9 @@
 /.classpath
 /.settings
 /.project
+/.idea
 /work
 /target
+
+*.iml
+
