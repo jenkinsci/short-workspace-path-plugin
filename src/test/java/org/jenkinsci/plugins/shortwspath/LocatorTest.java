@@ -26,6 +26,13 @@ package org.jenkinsci.plugins.shortwspath;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+
+import hudson.matrix.AxisList;
+import hudson.matrix.LabelExpAxis;
+import hudson.matrix.MatrixBuild;
+import hudson.matrix.MatrixProject;
+import hudson.matrix.MatrixRun;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
@@ -37,6 +44,7 @@ import java.util.Map;
 
 import jenkins.model.Jenkins;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -91,7 +99,25 @@ public class LocatorTest {
         assertThat(buildWs, buildWs.length(), equalTo(wsDir.length() + 24));
     }
 
-    private void setMaxPathLength(Slave s, int length) {
+    @Test
+    public void shortenMatrix() throws Exception {
+        Node slave = j.createOnlineSlave();
+        setMaxPathLength(slave, 1); // Not enough for anything
+
+        MatrixProject mp = j.createMatrixProject();
+        mp.setAssignedNode(slave);
+        mp.setAxes(new AxisList(new LabelExpAxis("axis", slave.getNodeName())));
+
+        MatrixBuild build = j.buildAndAssertSuccess(mp);
+        assertThat(build.getBuiltOn(), equalTo(slave));
+        MatrixRun run = build.getExactRuns().get(0);
+        assertThat(run.getBuiltOn(), equalTo(slave));
+
+        System.out.println(build.getWorkspace());
+        System.out.println(run.getWorkspace());
+    }
+
+    private void setMaxPathLength(Node s, int length) {
         ShortWsLocator locator = Jenkins.getInstance().getExtensionList(ShortWsLocator.class).get(0);
         try {
             Field f = ShortWsLocator.class.getDeclaredField("cachedMaxLengths");
