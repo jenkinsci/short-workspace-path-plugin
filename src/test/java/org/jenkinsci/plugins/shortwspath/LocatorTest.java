@@ -62,6 +62,9 @@ public class LocatorTest {
         FreeStyleProject p = f.createProject(FreeStyleProject.class, "and_a_project_in_it");
         p.setAssignedNode(s);
 
+        // Enough for the test - even on windows
+        setMaxPathLength(s, 4096);
+
         FreeStyleBuild b = p.scheduleBuild2(0).get();
         assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + "/workspace/" + p.getFullName()));
     }
