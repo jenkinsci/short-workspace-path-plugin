@@ -69,7 +69,7 @@ public class LocatorTest {
         setMaxPathLength(s, 4096);
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
-        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + DS + "workspace" + DS + p.getFullName().replaceAll("/", DS)));
+        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + DS + "workspace" + DS + p.getFullName().replace("/", DS)));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class LocatorTest {
         setMaxPathLength(s, 1);
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
-        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + DS + "workspace" + DS + p.getFullName().replaceAll("/", DS)));
+        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + DS + "workspace" + DS + p.getFullName().replace("/", DS)));
     }
 
     @Test
