@@ -39,6 +39,7 @@ import hudson.model.Node;
 import hudson.model.Slave;
 import hudson.slaves.DumbSlave;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -51,6 +52,8 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.MockFolder;
 
 public class LocatorTest {
+
+    public static final String DS = File.separator;
 
     @Rule public JenkinsRule j = new JenkinsRule();
 
@@ -66,7 +69,7 @@ public class LocatorTest {
         setMaxPathLength(s, 4096);
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
-        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + "/workspace/" + p.getFullName()));
+        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + DS + "workspace" + DS + p.getFullName().replaceAll("/", DS)));
     }
 
     @Test
@@ -81,7 +84,7 @@ public class LocatorTest {
         setMaxPathLength(s, 1);
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
-        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + "/workspace/" + p.getFullName()));
+        assertThat(b.getWorkspace().getRemote(), equalTo(s.getRootPath() + DS + "workspace" + DS + p.getFullName().replaceAll("/", DS)));
     }
 
     @Test
@@ -97,7 +100,7 @@ public class LocatorTest {
 
         FreeStyleBuild b = p.scheduleBuild2(0).get();
         String buildWs = b.getWorkspace().getRemote();
-        String wsDir = s.getRootPath() + "/workspace/";
+        String wsDir = s.getRootPath() + DS + "workspace" + DS;
         assertThat(buildWs, startsWith(wsDir + "and_a_pro"));
         assertThat(buildWs, buildWs.length(), equalTo(wsDir.length() + 24));
     }
