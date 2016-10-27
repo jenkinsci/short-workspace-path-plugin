@@ -112,7 +112,9 @@ public class ShortWsLocator extends WorkspaceLocator {
     	
     	String itemName = StringUtils.abbreviate(iName, 0, 16);
 
-    	// Replace the ellipsis to avoid problems with certain build systems
+        // Replace the ellipsis with dashes to avoid problems with msbuild
+        // prior to version 4.6.2.  It used its own path normalization (vs. built in .NET)
+        // which doesn't recognize ... as a valid path.
     	LOGGER.info("Initial prefix to add : "+INITIAL_PREFIX);
     	// adding prefix in the beginning of the build job name to indicate that the item was changed
     	if (INITIAL_PREFIX!= null) {
