@@ -110,7 +110,7 @@ public class LocatorTest {
         Node slave = j.createOnlineSlave();
         setMaxPathLength(slave, 1); // Not enough for anything
 
-        MatrixProject mp = j.createMatrixProject();
+        MatrixProject mp = j.createProject(MatrixProject.class);
         mp.setAssignedNode(slave);
         mp.setAxes(new AxisList(new LabelExpAxis("axis", slave.getNodeName())));
 
