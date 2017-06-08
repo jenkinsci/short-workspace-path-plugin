@@ -106,6 +106,24 @@ public class LocatorTest {
     }
 
     @Test
+    public void replaceSlashesInFolders() throws Exception {
+        DumbSlave s = j.createOnlineSlave();
+
+        MockFolder f = j.createFolder("this_is_my_folder_alright");
+        FreeStyleProject p = f.createProject(FreeStyleProject.class, "and%2Fa%2Fproject%2Fin%2Fit");
+        p.setAssignedNode(s);
+
+        // Not enough for anything
+        setMaxPathLength(s, 1);
+
+        FreeStyleBuild b = p.scheduleBuild2(0).get();
+        String buildWs = b.getWorkspace().getRemote();
+        String wsDir = s.getRootPath() + DS + "workspace" + DS;
+        assertThat(buildWs, startsWith(wsDir + "and_a_pro"));
+        assertThat(buildWs, buildWs.length(), equalTo(wsDir.length() + 20));
+    }
+
+    @Test
     public void shortenMatrix() throws Exception {
         Node slave = j.createOnlineSlave();
         setMaxPathLength(slave, 1); // Not enough for anything

@@ -31,6 +31,7 @@ import hudson.model.TopLevelItem;
 import hudson.model.Node;
 import hudson.model.Slave;
 import hudson.remoting.VirtualChannel;
+import jenkins.SlaveToMasterFileCallable;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +82,11 @@ public class ShortWsLocator extends WorkspaceLocator {
         final String digest = Util.getDigestOf(item.getFullName()).substring(0, 8);
         FilePath workspaceRoot = slave.getWorkspaceRoot();
         if (workspaceRoot == null) return null; // Slave went offline
-        FilePath newPath = workspaceRoot.child(itemName + digest);
+        String fullPath = itemName + digest;
+        fullPath = fullPath.replace("%2F","_");
+        fullPath = fullPath.replace("%2","_");
+        fullPath = fullPath.replace("%","_");
+        FilePath newPath = workspaceRoot.child(fullPath);
 
         return newPath.getRemote().length() < def.getRemote().length()
                 ? newPath
@@ -121,7 +126,7 @@ public class ShortWsLocator extends WorkspaceLocator {
         return platformMax - prefixLength;
     }
 
-    private static final class Sniffer implements FilePath.FileCallable<Integer> {
+    private static final class Sniffer extends SlaveToMasterFileCallable<Integer> {
 
         public Integer invoke(File ws, VirtualChannel channel) throws IOException, InterruptedException {
             // Good enough for now
