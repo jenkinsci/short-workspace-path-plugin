@@ -57,7 +57,7 @@ public class ShortWsLocator extends WorkspaceLocator {
     private static int BUILD_PATH_LENGTH = Integer.getInteger("org.jenkinsci.plugins.shortwspath.BUILD_PATH_LENGTH", 512);
 
     // To be invalidated when slave is reconnected
-    private final Map<Node, Integer> cachedMaxLengths = new WeakHashMap<Node, Integer>();
+    private final Map<Node, Integer> cachedMaxLengths = new WeakHashMap<>();
 
     @Override
     public FilePath locate(TopLevelItem item, Node node) {
@@ -109,7 +109,7 @@ public class ShortWsLocator extends WorkspaceLocator {
                 platformMax = path.act(sniffer);
                 cachedMaxLengths.put(node, platformMax);
             } catch (IOException ex) {
-                LOGGER.log(Level.INFO, "Unalbe to " + sniffer, ex);
+                LOGGER.log(Level.INFO, "Unable to " + sniffer, ex);
                 return Integer.MAX_VALUE; // Do not intercept
             } catch (InterruptedException ex) {
                 LOGGER.log(Level.INFO, "Interrupted while trying to " + sniffer, ex);
