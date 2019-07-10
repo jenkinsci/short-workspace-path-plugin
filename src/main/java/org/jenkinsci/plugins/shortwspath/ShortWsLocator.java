@@ -77,7 +77,7 @@ public class ShortWsLocator extends WorkspaceLocator {
         // Replace the ellipsis with dashes to avoid problems with msbuild
         // prior to version 4.6.2.  It used its own path normalization (vs. built in .NET)
         // which doesn't recognize ... as a valid path.
-        itemName = itemName.replace("...", "---");
+        itemName = itemName.replace("...", "---").replace("%2F", "-");
         final String digest = Util.getDigestOf(item.getFullName()).substring(0, 8);
         FilePath workspaceRoot = slave.getWorkspaceRoot();
         if (workspaceRoot == null) return null; // Slave went offline
