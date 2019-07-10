@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>short-workspace-path</artifactId>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Short Workspace Path Plugin</name>
   <description>Use shallow directory hierarchy for build workspaces to avoid failures on filesystems with constrained path length</description>
@@ -25,7 +25,7 @@
     <connection>scm:git:git://github.com/jenkinsci/short-workspace-path-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/short-workspace-path-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/short-workspace-path-plugin</url>
-    <tag>short-workspace-path-0.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <dependencies>
