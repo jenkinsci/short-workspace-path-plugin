@@ -12,15 +12,7 @@
   <name>Short Workspace Path Plugin</name>
   <description>Use shallow directory hierarchy for build workspaces to avoid failures on filesystems with constrained path length</description>
   <url>http://wiki.jenkins-ci.org/display/JENKINS/Short+Workspace+Path+Plugin</url>
-
-  <developers>
-    <developer>
-      <id>olivergondza</id>
-      <name>Oliver Gondža</name>
-      <email>ogondza@gmail.com</email>
-    </developer>
-  </developers>
-
+  
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/short-workspace-path-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/short-workspace-path-plugin.git</developerConnection>
